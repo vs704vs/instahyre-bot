@@ -20,13 +20,12 @@ async def main():
         await page.wait_for_timeout(500)  # Wait 0.5 second for scripts to settle
         await page.wait_for_selector('#email', timeout=50)
         await page.wait_for_selector('#password', timeout=50)
-        # Use type() for more reliable input
         await page.click('#email')
         await page.type('#email', email, delay=10)
         await page.click('#password')
         await page.type('#password', password, delay=10)
-        await page.wait_for_timeout(500)  # Small delay before clicking login
-        # Click login button once
+        await page.wait_for_timeout(50)
+        # Click login button
         await page.click('button[type="submit"].btn-success')
         print("Login attempted!")
 
