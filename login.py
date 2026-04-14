@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 _browser = None
 _playwright = None
 
-async def main():
+async def login_main():
     global _browser, _playwright
     load_dotenv()
     email = os.getenv("INSTA_EMAIL")

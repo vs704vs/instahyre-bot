@@ -1,5 +1,5 @@
 import asyncio
-from login import main as login_main, close_browser
+from login import login_main, close_browser
 from jobs import handle_jobs
 
 async def orchestrate():
