@@ -8,5 +8,7 @@ async def handle_jobs(page: Page):
     if parent_div:
         await parent_div.click()
         print("Clicked 'Search other jobs' heading.")
+        await page.click('#years')
+        await page.type('#years', '2', delay=10)
     else:
         print("'Search other jobs' heading not found.")
