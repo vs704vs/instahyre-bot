@@ -46,6 +46,8 @@ async def filter_jobs_by_yoe(page, target_yoe):
 
 
 async def filter_jobs_by_job_function(page, target_job_func_arr):
+    if not target_job_func_arr:
+        return
     job_func_selector = "div.selectize-control.ng-isolate-scope.ng-pristine.ng-valid.multi.plugin-remove_button"
     await page.locator(job_func_selector).nth(1).click()
     await page.wait_for_timeout(300)  # Wait for dropdown to open
@@ -82,6 +84,8 @@ async def filter_jobs_by_job_function(page, target_job_func_arr):
 
 
 async def filter_jobs_by_location(page, target_location_arr):
+    if not target_location_arr:
+        return
     location_selector = "div.selectize-control.ng-isolate-scope.ng-pristine.ng-valid.multi.plugin-remove_button"
     await page.locator(location_selector).nth(3).click()
     await page.wait_for_timeout(300)
@@ -114,6 +118,7 @@ async def filter_jobs_by_location(page, target_location_arr):
             print(f"Option matching '{target_location}' not found.")
 
 
+
 async def filter_jobs_by_size(page, target_company_size):
     if target_company_size == "":
         return
@@ -134,6 +139,8 @@ async def filter_jobs_by_size(page, target_company_size):
     await page.wait_for_selector(select_selector, timeout=3000)
     await page.select_option(select_selector, value=value)
     print(f"Selected company size: {target_company_size.title()}")
+
+
 
 def normalise_text(text):
     return text.replace(' ', '').replace('-', '').lower()
