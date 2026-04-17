@@ -13,18 +13,16 @@ async def handle_jobs(page: Page):
     target_location_string = os.getenv("LOCATIONS", "")
     target_location_arr = target_location_string.split(",") if target_location_string else []
 
-    # Define the selector for the 'Search other jobs' element
     selector = "div.job-search-heading:has(h6:text('Search other jobs'))"
     await page.wait_for_selector(selector, timeout=5000)
     parent_div = await page.query_selector(selector)
+
     try:
         await parent_div.click()
         print("Clicked 'Search other jobs' heading.")
 
 
-        if(target_yoe != ""):
-            await page.click('#years')
-            await page.type('#years', target_yoe, delay=10)
+        await filter_jobs_by_yoe(page, target_yoe)
 
 
 
@@ -127,6 +125,13 @@ async def handle_jobs(page: Page):
         print(f"Error occurred: {e}")
 
     time.sleep(2)  # Wait for the page to update after clicking
+
+
+async def filter_jobs_by_yoe(page, target_yoe):
+    if(target_yoe != ""):
+            await page.click('#years')
+            await page.type('#years', target_yoe, delay=10)
+
 
 def normalise_text(text):
     return text.replace(' ', '').replace('-', '').lower()
