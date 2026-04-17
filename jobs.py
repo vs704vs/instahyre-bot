@@ -13,6 +13,8 @@ async def handle_jobs(page: Page):
     target_location_string = os.getenv("LOCATIONS", "")
     target_location_arr = target_location_string.split(",") if target_location_string else []
 
+    target_company_size = os.getenv("COMPANY_SIZE", "")
+
     selector = "div.job-search-heading:has(h6:text('Search other jobs'))"
     await page.wait_for_selector(selector, timeout=5000)
     parent_div = await page.query_selector(selector)
@@ -24,9 +26,9 @@ async def handle_jobs(page: Page):
         await filter_jobs_by_yoe(page, target_yoe)
         await filter_jobs_by_job_function(page, target_job_func_arr)
         await filter_jobs_by_location(page, target_location_arr)
-
+        await filter_jobs_by_size(page, target_company_size)
         await page.click("#show-results")
-        
+
     except Exception as e:
         print(f"Error occurred: {e}")
 
@@ -36,9 +38,10 @@ async def handle_jobs(page: Page):
 
 
 async def filter_jobs_by_yoe(page, target_yoe):
-    if(target_yoe != ""):
-            await page.click('#years')
-            await page.type('#years', target_yoe, delay=10)
+    if target_yoe == "":
+        return
+    await page.click('#years')
+    await page.type('#years', target_yoe, delay=10)
 
 
 
@@ -111,6 +114,26 @@ async def filter_jobs_by_location(page, target_location_arr):
             print(f"Option matching '{target_location}' not found.")
 
 
+async def filter_jobs_by_size(page, target_company_size):
+    if target_company_size == "":
+        return
+
+    target_company_size = normalise_text(target_company_size)
+    size_map = {
+        'all': '0',
+        'small': '1',
+        'large': '2',
+        'medium': '3',
+    }
+    value = size_map.get(target_company_size)
+    if value is None:
+        print(f"Unknown company size: {target_company_size}")
+        return
+
+    select_selector = '#company-size'
+    await page.wait_for_selector(select_selector, timeout=3000)
+    await page.select_option(select_selector, value=value)
+    print(f"Selected company size: {target_company_size.title()}")
 
 def normalise_text(text):
     return text.replace(' ', '').replace('-', '').lower()
