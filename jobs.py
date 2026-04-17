@@ -27,12 +27,13 @@ async def handle_jobs(page: Page):
         option = await page.query_selector(f"{option_selector}")
         # Find the correct option by evaluating all options
         options = await page.query_selector_all(option_selector)
-        target_text = 'allsoftwareengineering'
+        target_text = 'All-Software Engineering'
+        target_text = normalise_text(target_text)
         clicked = False
         for opt in options:
             text = await opt.inner_text()
             print(f"Option text: '{text}'")
-            norm = text.replace(' ', '').replace('-', '').lower()
+            norm = normalise_text(text)
             if norm == target_text:
                 await opt.click()
                 print("Clicked 'All - Software Engineering' option.")
@@ -44,3 +45,6 @@ async def handle_jobs(page: Page):
         print(f"Error occurred: {e}")
 
     time.sleep(2)  # Wait for the page to update after clicking
+
+def normalise_text(text):
+    return text.replace(' ', '').replace('-', '').lower()
