@@ -28,6 +28,7 @@ async def handle_jobs(page: Page):
 
 
 
+        await filter_jobs_by_job_function(page, target_job_func_arr)
 
 
 
@@ -35,38 +36,7 @@ async def handle_jobs(page: Page):
 
 
 
-
-        job_func_selector = "div.selectize-control.ng-isolate-scope.ng-pristine.ng-valid.multi.plugin-remove_button"
-        await page.locator(job_func_selector).nth(1).click()
-        await page.wait_for_timeout(300)  # Wait for dropdown to open
-
-        job_func_option_selector = "div.option.selectize-option.nested-option"
-
-        target_job_func_arr = target_job_func_arr[:3] # Use only the first 3 job functions for selection
-        target_job_func_arr = [normalise_text(t) for t in target_job_func_arr]
-        target_job_func_set = set(target_job_func_arr)
-
-        for target_job_func in target_job_func_arr:
-            # Re-open the dropdown before each selection
-            await page.locator(job_func_selector).nth(1).click()
-            await page.wait_for_timeout(300)
-            options = await page.query_selector_all(job_func_option_selector)
-            found = False
-
-            for opt in options:
-                text = await opt.inner_text()
-                option_text = normalise_text(text)
-                if option_text == target_job_func:
-                    try:
-                        await opt.scroll_into_view_if_needed()
-                        await opt.click()
-                        print(f"Clicked '{text}' option.")
-                        found = True
-                        break
-                    except Exception as click_err:
-                        print(f"Failed to click '{text}' option: {click_err}")
-            if not found:
-                print(f"Option matching '{target_job_func}' not found.")
+        
 
 
 
@@ -131,6 +101,41 @@ async def filter_jobs_by_yoe(page, target_yoe):
     if(target_yoe != ""):
             await page.click('#years')
             await page.type('#years', target_yoe, delay=10)
+
+
+async def filter_jobs_by_job_function(page, target_job_func_arr):
+    job_func_selector = "div.selectize-control.ng-isolate-scope.ng-pristine.ng-valid.multi.plugin-remove_button"
+    await page.locator(job_func_selector).nth(1).click()
+    await page.wait_for_timeout(300)  # Wait for dropdown to open
+
+    job_func_option_selector = "div.option.selectize-option.nested-option"
+
+    target_job_func_arr = target_job_func_arr[:3] # Use only the first 3 job functions for selection
+    target_job_func_arr = [normalise_text(t) for t in target_job_func_arr]
+    target_job_func_set = set(target_job_func_arr)
+
+    for target_job_func in target_job_func_arr:
+        # Re-open the dropdown before each selection
+        await page.locator(job_func_selector).nth(1).click()
+        await page.wait_for_timeout(300)
+        options = await page.query_selector_all(job_func_option_selector)
+        found = False
+
+        for opt in options:
+            text = await opt.inner_text()
+            option_text = normalise_text(text)
+            if option_text == target_job_func:
+                try:
+                    await opt.scroll_into_view_if_needed()
+                    await opt.click()
+                    print(f"Clicked '{text}' option.")
+                    found = True
+                    break
+                except Exception as click_err:
+                    print(f"Failed to click '{text}' option: {click_err}")
+        if not found:
+            print(f"Option matching '{target_job_func}' not found.")
+
 
 
 def normalise_text(text):
