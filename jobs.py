@@ -32,8 +32,6 @@ async def handle_jobs(page: Page):
     except Exception as e:
         print(f"Error occurred: {e}")
 
-    time.sleep(5)  # Wait for the page to update after clicking
-
 
 
 
