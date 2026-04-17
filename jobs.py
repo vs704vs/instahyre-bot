@@ -20,76 +20,9 @@ async def handle_jobs(page: Page):
     try:
         await parent_div.click()
         print("Clicked 'Search other jobs' heading.")
-
-
         await filter_jobs_by_yoe(page, target_yoe)
-
-
-
-
-
         await filter_jobs_by_job_function(page, target_job_func_arr)
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        location_selector = "div.selectize-control.ng-isolate-scope.ng-pristine.ng-valid.multi.plugin-remove_button"
-        await page.locator(location_selector).nth(3).click()
-        await page.wait_for_timeout(300)
-
-        location_option_selector = "div.selectize-dropdown-content div.option"
-
-        target_location_arr = target_location_arr[:15] # Use only the first 15 locations for selection
-        target_location_arr = [normalise_text(t) for t in target_location_arr]
-        target_location_set = set(target_location_arr)
-
-        for target_location in target_location_arr:
-            # Re-open the dropdown before each selection
-            await page.locator(location_selector).nth(3).click()
-            await page.wait_for_timeout(300)
-            options = await page.query_selector_all(location_option_selector)
-            found = False
-            for opt in options:
-                text = await opt.inner_text()
-                option_text = normalise_text(text)
-                if option_text == target_location:
-                    try:
-                        await opt.scroll_into_view_if_needed()
-                        await opt.click()
-                        print(f"Clicked '{text}' option.")
-                        found = True
-                        break
-                    except Exception as click_err:
-                        print(f"Failed to click '{text}' option: {click_err}")
-            if not found:
-                print(f"Option matching '{target_location}' not found.")
+        await filter_jobs_by_location(page, target_location_arr)
 
     except Exception as e:
         print(f"Error occurred: {e}")
@@ -97,10 +30,13 @@ async def handle_jobs(page: Page):
     time.sleep(2)  # Wait for the page to update after clicking
 
 
+
+
 async def filter_jobs_by_yoe(page, target_yoe):
     if(target_yoe != ""):
             await page.click('#years')
             await page.type('#years', target_yoe, delay=10)
+
 
 
 async def filter_jobs_by_job_function(page, target_job_func_arr):
@@ -135,6 +71,41 @@ async def filter_jobs_by_job_function(page, target_job_func_arr):
                     print(f"Failed to click '{text}' option: {click_err}")
         if not found:
             print(f"Option matching '{target_job_func}' not found.")
+
+
+
+
+async def filter_jobs_by_location(page, target_location_arr):
+    location_selector = "div.selectize-control.ng-isolate-scope.ng-pristine.ng-valid.multi.plugin-remove_button"
+    await page.locator(location_selector).nth(3).click()
+    await page.wait_for_timeout(300)
+
+    location_option_selector = "div.selectize-dropdown-content div.option"
+
+    target_location_arr = target_location_arr[:15] # Use only the first 15 locations for selection
+    target_location_arr = [normalise_text(t) for t in target_location_arr]
+    target_location_set = set(target_location_arr)
+
+    for target_location in target_location_arr:
+        # Re-open the dropdown before each selection
+        await page.locator(location_selector).nth(3).click()
+        await page.wait_for_timeout(300)
+        options = await page.query_selector_all(location_option_selector)
+        found = False
+        for opt in options:
+            text = await opt.inner_text()
+            option_text = normalise_text(text)
+            if option_text == target_location:
+                try:
+                    await opt.scroll_into_view_if_needed()
+                    await opt.click()
+                    print(f"Clicked '{text}' option.")
+                    found = True
+                    break
+                except Exception as click_err:
+                    print(f"Failed to click '{text}' option: {click_err}")
+        if not found:
+            print(f"Option matching '{target_location}' not found.")
 
 
 
