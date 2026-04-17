@@ -18,24 +18,23 @@ async def handle_jobs(page: Page):
         await page.locator(job_func_selector).nth(1).click()
         await page.wait_for_timeout(300)  # Wait for dropdown to open
 
-        option_selector = "div.option.selectize-option.nested-option"
-        await page.wait_for_selector(option_selector, timeout=5000)
-        options = await page.query_selector_all(option_selector)
+        job_func_option_selector = "div.option.selectize-option.nested-option"
 
-        target_text_arr = ['All-Software Engineering', 'backend development', 'frontend development']
-        target_text_arr = [normalise_text(t) for t in target_text_arr]
-        target_text_set = set(target_text_arr)
+        target_job_func_arr = ['All-Software Engineering', 'backend development', 'frontend development']
+        target_job_func_arr = [normalise_text(t) for t in target_job_func_arr]
+        target_job_func_set = set(target_job_func_arr)
 
-        for target_text in target_text_arr:
+        for target_job_func in target_job_func_arr:
             # Re-open the dropdown before each selection
             await page.locator(job_func_selector).nth(1).click()
             await page.wait_for_timeout(300)
-            options = await page.query_selector_all(option_selector)
+            options = await page.query_selector_all(job_func_option_selector)
             found = False
+
             for opt in options:
                 text = await opt.inner_text()
                 option_text = normalise_text(text)
-                if option_text == target_text:
+                if option_text == target_job_func:
                     try:
                         await opt.scroll_into_view_if_needed()
                         await opt.click()
@@ -45,7 +44,31 @@ async def handle_jobs(page: Page):
                     except Exception as click_err:
                         print(f"Failed to click '{text}' option: {click_err}")
             if not found:
-                print(f"Option matching '{target_text}' not found.")
+                print(f"Option matching '{target_job_func}' not found.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
 
     except Exception as e:
         print(f"Error occurred: {e}")
