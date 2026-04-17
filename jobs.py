@@ -20,14 +20,17 @@ async def handle_jobs(page: Page):
     try:
         await parent_div.click()
         print("Clicked 'Search other jobs' heading.")
+
         await filter_jobs_by_yoe(page, target_yoe)
         await filter_jobs_by_job_function(page, target_job_func_arr)
         await filter_jobs_by_location(page, target_location_arr)
 
+        await page.click("#show-results")
+        
     except Exception as e:
         print(f"Error occurred: {e}")
 
-    time.sleep(2)  # Wait for the page to update after clicking
+    time.sleep(5)  # Wait for the page to update after clicking
 
 
 
