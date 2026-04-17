@@ -9,7 +9,7 @@ async def orchestrate():
     if page is not None:
         await handle_jobs(page)
         await apply_jobs(page)
-        time.sleep(5)  # Wait for any final actions to complete before closing the browser
+        time.sleep(2)  # Wait for any final actions to complete before closing the browser
     await close_browser()
 
 if __name__ == "__main__":
