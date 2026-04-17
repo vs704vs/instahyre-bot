@@ -8,12 +8,14 @@ async def apply_jobs(page: Page):
 		await page.locator(view_job_selector).nth(0).click()
 
 		apply_selector = "button.btn.btn-lg.btn-primary.new-btn"
-		while(True):
+		while True:
 			await page.locator(apply_selector).click()
 			print("Clicked 'Apply' button.")
 			await page.wait_for_timeout(2000)
 
-        await page.locator(apply_selector).click() # Final click for 1 remaining job after loop
-
+		# Final click for 1 remaining job after loop, only if selector exists
+		if await page.locator(apply_selector).count() > 0:
+			await page.locator(apply_selector).click()
+            
 	except Exception as e:
 		print(f"No button with id 'interested-btn' could be clicked: {e}")
