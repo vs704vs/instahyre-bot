@@ -1,7 +1,18 @@
 from playwright.async_api import Page
 import time
+import os
+from dotenv import load_dotenv
 
 async def handle_jobs(page: Page):
+    load_dotenv()
+    target_yoe = os.getenv("YOE", "")
+
+    target_job_func_string = os.getenv("JOB_FUNCTIONS", "")
+    target_job_func_arr = target_job_func_string.split(",") if target_job_func_string else []
+
+    target_location_string = os.getenv("LOCATIONS", "")
+    target_location_arr = target_location_string.split(",") if target_location_string else []
+
     # Define the selector for the 'Search other jobs' element
     selector = "div.job-search-heading:has(h6:text('Search other jobs'))"
     await page.wait_for_selector(selector, timeout=5000)
@@ -10,9 +21,10 @@ async def handle_jobs(page: Page):
         await parent_div.click()
         print("Clicked 'Search other jobs' heading.")
 
-        target_yoe = '2' 
-        await page.click('#years')
-        await page.type('#years', target_yoe, delay=10)
+
+        if(target_yoe != ""):
+            await page.click('#years')
+            await page.type('#years', target_yoe, delay=10)
 
 
 
@@ -32,7 +44,6 @@ async def handle_jobs(page: Page):
 
         job_func_option_selector = "div.option.selectize-option.nested-option"
 
-        target_job_func_arr = ['All-Software Engineering', 'backend development', 'frontend development', 'full-stack development']
         target_job_func_arr = target_job_func_arr[:3] # Use only the first 3 job functions for selection
         target_job_func_arr = [normalise_text(t) for t in target_job_func_arr]
         target_job_func_set = set(target_job_func_arr)
@@ -87,7 +98,6 @@ async def handle_jobs(page: Page):
 
         location_option_selector = "div.selectize-dropdown-content div.option"
 
-        target_location_arr = ['Bangalore', 'north India', 'Delhi', 'guntur']
         target_location_arr = target_location_arr[:15] # Use only the first 15 locations for selection
         target_location_arr = [normalise_text(t) for t in target_location_arr]
         target_location_set = set(target_location_arr)
