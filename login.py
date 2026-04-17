@@ -20,7 +20,6 @@ async def login_main():
     page = await _browser.new_page()
     await page.goto("https://www.instahyre.com/login/")
     await page.wait_for_load_state('networkidle')
-    await page.wait_for_timeout(500)
     await page.wait_for_selector('#email', timeout=5000)
     await page.wait_for_selector('#password', timeout=5000)
     await page.click('#email')
