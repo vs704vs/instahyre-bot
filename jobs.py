@@ -32,7 +32,8 @@ async def handle_jobs(page: Page):
 
         job_func_option_selector = "div.option.selectize-option.nested-option"
 
-        target_job_func_arr = ['All-Software Engineering', 'backend development', 'frontend development']
+        target_job_func_arr = ['All-Software Engineering', 'backend development', 'frontend development', 'full-stack development']
+        target_job_func_arr = target_job_func_arr[:3] # Use only the first 3 job functions for selection
         target_job_func_arr = [normalise_text(t) for t in target_job_func_arr]
         target_job_func_set = set(target_job_func_arr)
 
@@ -87,6 +88,7 @@ async def handle_jobs(page: Page):
         location_option_selector = "div.selectize-dropdown-content div.option"
 
         target_location_arr = ['Bangalore', 'north India', 'Delhi', 'guntur']
+        target_location_arr = target_location_arr[:15] # Use only the first 15 locations for selection
         target_location_arr = [normalise_text(t) for t in target_location_arr]
         target_location_set = set(target_location_arr)
 
