@@ -10,8 +10,20 @@ async def handle_jobs(page: Page):
         await parent_div.click()
         print("Clicked 'Search other jobs' heading.")
 
+        target_yoe = '2' 
         await page.click('#years')
-        await page.type('#years', '2', delay=10)
+        await page.type('#years', target_yoe, delay=10)
+
+
+
+
+
+
+
+
+
+
+
 
 
         job_func_selector = "div.selectize-control.ng-isolate-scope.ng-pristine.ng-valid.multi.plugin-remove_button"
