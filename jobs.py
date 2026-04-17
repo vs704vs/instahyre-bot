@@ -14,32 +14,38 @@ async def handle_jobs(page: Page):
         await page.type('#years', '2', delay=10)
 
 
-        job_func_selector = "input[placeholder='Select job functions']"
-        await page.wait_for_selector(job_func_selector, timeout=1000)
-        await page.click(job_func_selector)
+        job_func_selector = "div.selectize-control.ng-isolate-scope.ng-pristine.ng-valid.multi.plugin-remove_button"
+        await page.locator(job_func_selector).nth(1).click()
+        await page.wait_for_timeout(300)  # Wait for dropdown to open
 
-        # Click the dropdown option with text 'All - Software Engineering', insensitive to case, spaces, and hyphens
-        # Normalize text in JS: remove spaces, hyphens, lowercase
-        option_selector = (
-            "div.option.selectize-option.nested-option"
-        )
-        await page.wait_for_selector(option_selector, timeout=1000)
-        option = await page.query_selector(f"{option_selector}")
-        # Find the correct option by evaluating all options
+        option_selector = "div.option.selectize-option.nested-option"
+        await page.wait_for_selector(option_selector, timeout=5000)
         options = await page.query_selector_all(option_selector)
-        target_text = 'All-Software Engineering'
-        target_text = normalise_text(target_text)
-        clicked = False
-        for opt in options:
-            text = await opt.inner_text()
-            print(f"Option text: '{text}'")
-            norm = normalise_text(text)
-            if norm == target_text:
-                await opt.click()
-                print("Clicked 'All - Software Engineering' option.")
-                clicked = True
-        if not clicked:
-            print("Option 'All - Software Engineering' not found.")
+
+        target_text_arr = ['All-Software Engineering', 'backend development', 'frontend development']
+        target_text_arr = [normalise_text(t) for t in target_text_arr]
+        target_text_set = set(target_text_arr)
+
+        for target_text in target_text_arr:
+            # Re-open the dropdown before each selection
+            await page.locator(job_func_selector).nth(1).click()
+            await page.wait_for_timeout(300)
+            options = await page.query_selector_all(option_selector)
+            found = False
+            for opt in options:
+                text = await opt.inner_text()
+                option_text = normalise_text(text)
+                if option_text == target_text:
+                    try:
+                        await opt.scroll_into_view_if_needed()
+                        await opt.click()
+                        print(f"Clicked '{text}' option.")
+                        found = True
+                        break
+                    except Exception as click_err:
+                        print(f"Failed to click '{text}' option: {click_err}")
+            if not found:
+                print(f"Option matching '{target_text}' not found.")
 
     except Exception as e:
         print(f"Error occurred: {e}")
