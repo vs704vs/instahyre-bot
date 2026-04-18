@@ -16,10 +16,20 @@ async def login_main():
         return None, None
 
     _playwright = await async_playwright().start()
-    _browser = await _playwright.chromium.launch(headless=True)
+    _browser = await _playwright.chromium.launch(
+        headless=True,
+        args=[
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--disable-setuid-sandbox",
+            "--single-process",
+            "--no-zygote",
+        ]
+    )
     page = await _browser.new_page()
-    await page.goto("https://www.instahyre.com/login/")
-    await page.wait_for_load_state('networkidle')
+    await page.goto("https://www.instahyre.com/login/", timeout=60000)
+    await page.wait_for_load_state('domcontentloaded')
     await page.wait_for_selector('#email', timeout=5000)
     await page.wait_for_selector('#password', timeout=5000)
     await page.click('#email')
