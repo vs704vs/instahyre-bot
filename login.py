@@ -59,12 +59,22 @@ async def login_main():
     await page.wait_for_timeout(50)
     await page.click('button[type="submit"].btn-success')
     print("Login attempted!")
+    await page.wait_for_timeout(5000)
+    print(f"Current URL after login: {page.url}")
+    await page.screenshot(path="/tmp/after_login.png")
+    print(f"Page title: {await page.title()}")
 
     login_success = False
-    await page.wait_for_function(
-        "window.location.href.startsWith('https://www.instahyre.com/candidate/opportunities') || document.querySelector(\"a#nav-candidates-logout[href='/logout/']\") !== null",
-        timeout=30000
-    )
+    try:
+        await page.wait_for_function(
+            "window.location.href.startsWith('https://www.instahyre.com/candidate/opportunities') || document.querySelector(\"a#nav-candidates-logout[href='/logout/']\") !== null",
+            timeout=30000
+        )
+    except Exception as wait_err:
+        print(f"Wait for login redirect failed: {wait_err}")
+        print(f"Final URL: {page.url}")
+        await page.screenshot(path="/tmp/login_failed.png")
+        return None, None
     signout_button = await page.query_selector("a#nav-candidates-logout[href='/logout/']")
     if signout_button:
         login_success = True
