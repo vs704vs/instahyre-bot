@@ -1,3 +1,9 @@
+import os
+if not os.path.exists("playwright_browsers_installed.txt"):
+    import subprocess
+    subprocess.run(["playwright", "install", "chromium"])
+    with open("playwright_browsers_installed.txt", "w") as f:
+        f.write("done")
 import streamlit as st
 import subprocess
 import os
