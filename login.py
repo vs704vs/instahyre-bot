@@ -23,14 +23,35 @@ async def login_main():
             "--disable-dev-shm-usage",
             "--disable-gpu",
             "--disable-setuid-sandbox",
+            "--disable-software-rasterizer",
+            "--disable-background-networking",
+            "--disable-default-apps",
+            "--disable-extensions",
+            "--disable-sync",
+            "--disable-translate",
+            "--metrics-recording-only",
+            "--mute-audio",
+            "--no-first-run",
+            "--safebrowsing-disable-auto-update",
+            "--disable-accelerated-2d-canvas",
+            "--disable-webgl",
+            "--hide-scrollbars",
+            "--ignore-certificate-errors",
         ]
     )
-    page = await _browser.new_page()
-    await page.goto("https://www.instahyre.com/login/", timeout=60000)
-    await page.wait_for_load_state('domcontentloaded')
-    await page.wait_for_timeout(2000)
-    await page.wait_for_selector('#email', timeout=15000)
-    await page.wait_for_selector('#password', timeout=15000)
+    context = await _browser.new_context(
+        user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    )
+    page = await context.new_page()
+    try:
+        await page.goto("https://www.instahyre.com/login/", timeout=60000, wait_until="domcontentloaded")
+    except Exception as nav_err:
+        print(f"Navigation error: {nav_err}")
+        await page.screenshot(path="/tmp/nav_error.png")
+        raise
+    await page.wait_for_timeout(3000)
+    await page.wait_for_selector('#email', timeout=20000)
+    await page.wait_for_selector('#password', timeout=20000)
     await page.click('#email')
     await page.type('#email', email, delay=10)
     await page.click('#password')

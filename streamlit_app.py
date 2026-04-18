@@ -1,16 +1,19 @@
 import os
 import sys
 import subprocess
+
 # Ensure playwright is installed in the current environment
 try:
     import playwright
 except ImportError:
     subprocess.run([sys.executable, "-m", "pip", "install", "playwright"])
     import playwright
-# Ensure browsers are installed
-if not os.path.exists("playwright_browsers_installed.txt"):
+
+# Ensure browsers are installed (use absolute path for the lock file)
+_install_lock = os.path.join(os.path.expanduser("~"), "playwright_browsers_installed.txt")
+if not os.path.exists(_install_lock):
     subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"])
-    with open("playwright_browsers_installed.txt", "w") as f:
+    with open(_install_lock, "w") as f:
         f.write("done")
 import streamlit as st
 import subprocess
