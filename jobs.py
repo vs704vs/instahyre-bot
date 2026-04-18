@@ -17,10 +17,23 @@ async def handle_jobs(page: Page):
 
     selector = "div.job-search-heading:has(h6:text('Search other jobs'))"
     await page.wait_for_selector(selector, timeout=5000)
-    parent_div = await page.query_selector(selector)
 
     try:
-        await parent_div.click()
+        # Only click the heading if the filter panel is not already open
+        years_visible = await page.locator('#years:not([disabled])').is_visible()
+        if not years_visible:
+            await page.evaluate("""
+                () => {
+                    const headings = document.querySelectorAll('div.job-search-heading');
+                    for (const el of headings) {
+                        if (el.textContent.trim().includes('Search other jobs')) {
+                            el.click();
+                            break;
+                        }
+                    }
+                }
+            """)
+            await page.wait_for_selector('#years:not([disabled])', state='visible', timeout=10000)
         print("Clicked 'Search other jobs' heading.")
 
         await filter_jobs_by_yoe(page, target_yoe)
@@ -38,6 +51,7 @@ async def handle_jobs(page: Page):
 async def filter_jobs_by_yoe(page, target_yoe):
     if target_yoe == "":
         return
+    await page.wait_for_selector('#years:not([disabled])', state='visible', timeout=5000)
     await page.click('#years')
     await page.type('#years', target_yoe, delay=10)
 
