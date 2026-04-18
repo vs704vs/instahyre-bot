@@ -23,15 +23,14 @@ async def login_main():
             "--disable-dev-shm-usage",
             "--disable-gpu",
             "--disable-setuid-sandbox",
-            "--single-process",
-            "--no-zygote",
         ]
     )
     page = await _browser.new_page()
     await page.goto("https://www.instahyre.com/login/", timeout=60000)
     await page.wait_for_load_state('domcontentloaded')
-    await page.wait_for_selector('#email', timeout=5000)
-    await page.wait_for_selector('#password', timeout=5000)
+    await page.wait_for_timeout(2000)
+    await page.wait_for_selector('#email', timeout=15000)
+    await page.wait_for_selector('#password', timeout=15000)
     await page.click('#email')
     await page.type('#email', email, delay=10)
     await page.click('#password')
