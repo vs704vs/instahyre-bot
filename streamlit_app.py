@@ -9,7 +9,7 @@ except ImportError:
     import playwright
 # Ensure browsers are installed
 if not os.path.exists("playwright_browsers_installed.txt"):
-    subprocess.run(["playwright", "install", "chromium"])
+    subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"])
     with open("playwright_browsers_installed.txt", "w") as f:
         f.write("done")
 import streamlit as st
@@ -44,7 +44,7 @@ if st.button("Start Applying"):
 
         with st.spinner("Running the bot and applying to jobs..."):
             result = subprocess.run(
-                ["python", "main.py"],
+                [sys.executable, "main.py"],
                 env=env,
                 capture_output=True,
                 text=True
