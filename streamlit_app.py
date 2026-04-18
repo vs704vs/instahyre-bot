@@ -1,6 +1,14 @@
 import os
+import sys
+import subprocess
+# Ensure playwright is installed in the current environment
+try:
+    import playwright
+except ImportError:
+    subprocess.run([sys.executable, "-m", "pip", "install", "playwright"])
+    import playwright
+# Ensure browsers are installed
 if not os.path.exists("playwright_browsers_installed.txt"):
-    import subprocess
     subprocess.run(["playwright", "install", "chromium"])
     with open("playwright_browsers_installed.txt", "w") as f:
         f.write("done")
