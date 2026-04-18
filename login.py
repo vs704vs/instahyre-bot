@@ -9,8 +9,8 @@ _playwright = None
 async def login_main():
     global _browser, _playwright
     load_dotenv()
-    email = os.getenv("INSTA_EMAIL")
-    password = os.getenv("INSTA_PASSWORD")
+    email = os.getenv("INSTAHYRE_EMAIL")
+    password = os.getenv("INSTAHYRE_PASSWORD")
     if not email or not password:
         print("Email or password not set in environment variables.")
         return None, None
