@@ -63,7 +63,7 @@ async def login_main():
     login_success = False
     await page.wait_for_function(
         "window.location.href.startsWith('https://www.instahyre.com/candidate/opportunities') || document.querySelector(\"a#nav-candidates-logout[href='/logout/']\") !== null",
-        timeout=5000
+        timeout=30000
     )
     signout_button = await page.query_selector("a#nav-candidates-logout[href='/logout/']")
     if signout_button:
