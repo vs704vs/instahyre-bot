@@ -16,7 +16,7 @@ async def login_main():
         return None, None
 
     _playwright = await async_playwright().start()
-    _browser = await _playwright.chromium.launch(headless=False)
+    _browser = await _playwright.chromium.launch(headless=True)
     page = await _browser.new_page()
     await page.goto("https://www.instahyre.com/login/")
     await page.wait_for_load_state('networkidle')
